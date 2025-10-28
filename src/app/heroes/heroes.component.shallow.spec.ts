@@ -4,6 +4,7 @@ import { Component, Input, NO_ERRORS_SCHEMA } from "@angular/core";
 import { HeroService } from "../hero.service";
 import { of } from "rxjs";
 import { Hero } from "../hero";
+import { By } from "@angular/platform-browser";
 
 describe('HeroesComponent (shallow tests)', () => {
     let fixture: ComponentFixture<HeroesComponent>;
@@ -17,7 +18,7 @@ describe('HeroesComponent (shallow tests)', () => {
     })
     class FakeHeroComponent {
         @Input() hero: Hero;
-        //   @Output() delete = new EventEmitter();
+        //  @Output() delete = new EventEmitter();
     }
     // --- END mock of HeroComponent
 
@@ -39,7 +40,7 @@ describe('HeroesComponent (shallow tests)', () => {
                 { provide: HeroService, useValue: mockHeroService }
             ],
             // ignores the child components
-            // has side effects - no errors in the template
+            // has side effects - no errors in the template are reported
             //schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(HeroesComponent);
@@ -52,6 +53,15 @@ describe('HeroesComponent (shallow tests)', () => {
         fixture.detectChanges();
 
         expect(fixture.componentInstance.heroes.length).toBe(3);
+    })
+
+    it('should create one li for each hero', () => {
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        // queryAll returns all elements that match the selector
+        // query returns the first element that matches the selector
+        expect(fixture.debugElement.queryAll(By.css('li')).length).toBe(3);
     })
 
 })
