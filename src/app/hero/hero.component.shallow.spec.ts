@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HeroComponent } from "./hero.component";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { By } from "@angular/platform-browser";
+
 // normally don't add 'shallow' to the filename to indicate what kind of tests
 // just for the purpose of this course
 
@@ -31,8 +33,14 @@ describe('HeroComponent (shallow tests)', () => {
         // call detectChanges() for that
         fixture.detectChanges();
 
-        // nativeElement returns the rendered DOM for the component
-        expect(fixture.nativeElement.querySelector('a').textContent).toContain('SuperDude')
+        // test using debugElement
+        // debugElement can also access directive (routerLink)
+        //  or the component by using componentInstance
+        let deA = fixture.debugElement.query(By.css('a'));
+        expect(deA.nativeElement.textContent).toContain('SuperDude');
+
+        // nativeElement returns the rendered browser DOM for the component
+        // expect(fixture.nativeElement.querySelector('a').textContent).toContain('SuperDude')
     })
     
 })
