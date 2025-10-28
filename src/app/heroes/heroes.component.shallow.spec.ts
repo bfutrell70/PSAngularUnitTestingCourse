@@ -1,13 +1,25 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing"
 import { HeroesComponent } from "./heroes.component"
-import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { Component, Input, NO_ERRORS_SCHEMA } from "@angular/core";
 import { HeroService } from "../hero.service";
 import { of } from "rxjs";
+import { Hero } from "../hero";
 
 describe('HeroesComponent (shallow tests)', () => {
     let fixture: ComponentFixture<HeroesComponent>;
     let mockHeroService;
     let HEROES;
+
+    // --- START mock of HeroComponent
+    @Component({
+        selector: "app-hero",
+        template: '<div><button class="delete" (click)="onDeleteClick($event)">x</button></div>',
+    })
+    class FakeHeroComponent {
+        @Input() hero: Hero;
+        //   @Output() delete = new EventEmitter();
+    }
+    // --- END mock of HeroComponent
 
     beforeEach(() => {
         HEROES = [
@@ -18,13 +30,17 @@ describe('HeroesComponent (shallow tests)', () => {
         mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHero']);
 
         TestBed.configureTestingModule({
-            declarations: [HeroesComponent],
+            declarations: [
+                HeroesComponent,
+                FakeHeroComponent
+            ],
             providers: [
                 // tells Angular when something expects HeroService, return mockHeroService
                 { provide: HeroService, useValue: mockHeroService }
             ],
             // ignores the child components
-            schemas: [NO_ERRORS_SCHEMA]
+            // has side effects - no errors in the template
+            //schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(HeroesComponent);
     })
