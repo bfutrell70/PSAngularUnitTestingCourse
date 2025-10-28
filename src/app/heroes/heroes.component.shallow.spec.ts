@@ -1,15 +1,41 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing"
 import { HeroesComponent } from "./heroes.component"
+import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { HeroService } from "../hero.service";
+import { of } from "rxjs";
 
-describe('HeroesComponent (shallow tests', () => {
+describe('HeroesComponent (shallow tests)', () => {
     let fixture: ComponentFixture<HeroesComponent>;
+    let mockHeroService;
+    let HEROES;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            declarations: [HeroesComponent]
-        })
-    })
-    fixture = TestBed.createComponent(HeroesComponent);
+        HEROES = [
+            { id: 1, name: 'SpiderDude', strength: 8 },
+            { id: 2, name: 'Wonderful Woman', strength: 24 },
+            { id: 3, name: 'SuperDude', strength: 55 },
+        ]
+        mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHero']);
 
-    
+        TestBed.configureTestingModule({
+            declarations: [HeroesComponent],
+            providers: [
+                // tells Angular when something expects HeroService, return mockHeroService
+                { provide: HeroService, useValue: mockHeroService }
+            ],
+            // ignores the child components
+            schemas: [NO_ERRORS_SCHEMA]
+        })
+        fixture = TestBed.createComponent(HeroesComponent);
+    })
+
+    // uses a service injected into the component
+
+    it('should set heroes correctly from service', () => {
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.heroes.length).toBe(3);
+    })
+
 })
