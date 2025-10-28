@@ -30,6 +30,7 @@ describe('HeroesComponent', () => {
       // this expect only verifies that a hero has been removed,
       // but not specifically the one that was specified.
       // --- instructor's expect
+      // checks that the state has changed
       //expect(component.heroes.length).toBe(2);
 
       // this expect filters for any hero that has the ID
@@ -37,4 +38,28 @@ describe('HeroesComponent', () => {
       expect(component.heroes.filter((h) => h.id === 3).length).toBe(0);
     });
   })
+
+  it('should call deleteHero', () => {
+    // have to tell the mock service to return an observable
+      mockHeroService.deleteHero.and.returnValue(of(true));
+      component.heroes = HEROES;
+
+      component.delete(HEROES[2]);
+
+      // verifies that deleteHero was called and that the correct hero was passed
+      expect(mockHeroService.deleteHero).toHaveBeenCalledWith(HEROES[2]);
+  })
+
+  // 'homework' from Testing Interactions
+  // supposed to test that we are subscribing to the result of the hero call
+  // it('is subscribing to deleteHero', () => {
+  //   // have to tell the mock service to return an observable
+  //     mockHeroService.deleteHero.and.returnValue(of(true));
+  //     component.heroes = HEROES;
+
+  //     let result = component.delete(HEROES[2]);
+
+  //     // verifies that deleteHero was called and that the correct hero was passed
+  //     expect(mockHeroService.deleteHero).toHaveBeenCalledWith(HEROES[2]);
+  // })
 })
