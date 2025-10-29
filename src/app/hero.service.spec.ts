@@ -41,12 +41,27 @@ describe('HeroService', () => {
         //     // test that the URL was correct
         // }))
 
-        it('should call het with the correct URL', () => {
+        it('should call get with the correct URL', () => {
             // call getHero();
-            service.getHero(4);
+            // must subscribe to make the request run
+            // if commented the test fails on the line with 'expectOne'
+            service.getHero(4).subscribe(hero => {
+                //expect(hero.id).toBe(4);
+            });
 
             // test that the URL is correct
-            httpTestingController.
-        })
+            const req = httpTestingController.expectOne('api/heroes/4');
+
+            // tells what to send back from the HTTP request
+            req.flush({id: 4, name: 'SuperDude', strength: 100});
+            // verifies that only the request we wanted were sent
+            httpTestingController.verify();
+
+            // another option for an expect
+            //expect(req.request.method).toBe('GET');
+
+            // test will pass, but shows 'SPEC HAS NO EXPECTATIONS'
+            // if the expect in the subscribe clock is not present
+        });
     })
 })
