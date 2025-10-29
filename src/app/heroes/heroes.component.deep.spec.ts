@@ -6,7 +6,7 @@ import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { of } from "rxjs";
 
 // testing the HeroesComponent and how it interacts with child
-// HeroComponents
+// HeroComponent components
 
 describe("HeroesComponent (deep tests)", () => {
     let fixture: ComponentFixture<HeroesComponent>;
@@ -37,11 +37,10 @@ describe("HeroesComponent (deep tests)", () => {
         fixture = TestBed.createComponent(HeroesComponent);
         mockHeroService.getHeroes.and.returnValue(of(HEROES));
 
+        // causes ngOnInit() to be invoked in components
         fixture.detectChanges();
     })
 
-    // on the video this test fails because 'routerLink' isn't a known property of 'a'.
-    // on my copy it works great :)
     it('should be true', () => {
         expect(true).toBe(true);
     })
