@@ -4,6 +4,7 @@ import { HeroComponent } from "../hero/hero.component";
 import { HeroService } from "../hero.service";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { of } from "rxjs";
+import { By } from "@angular/platform-browser";
 
 // testing the HeroesComponent and how it interacts with child
 // HeroComponent components
@@ -35,13 +36,28 @@ describe("HeroesComponent (deep tests)", () => {
             schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(HeroesComponent);
+        
+        // causes ngOnInit() to be invoked in components
+    })
+    
+    // it('should be true', () => {
+    //     expect(true).toBe(true);
+    // })
+    
+    it('should render each hero as a HeroComponent', () => {
         mockHeroService.getHeroes.and.returnValue(of(HEROES));
 
-        // causes ngOnInit() to be invoked in components
+        // run ngOnInit
         fixture.detectChanges();
-    })
 
-    it('should be true', () => {
-        expect(true).toBe(true);
-    })
+        // a component is a subclass of a dierctive
+        const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
+        expect(heroComponentDEs.length).toEqual(3);
+
+        // verify that the hero object passed into each HeroComponent is the correct one
+        // componentInstance is a HeroComponent
+        for (let i = 0; i < heroComponentDEs.length; i++) {
+            expect(heroComponentDEs[i].componentInstance.hero).toEqual(HEROES[i]);
+        }
+    });
 })
