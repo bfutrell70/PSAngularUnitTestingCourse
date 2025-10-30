@@ -90,12 +90,34 @@ describe("HeroesComponent (deep tests)", () => {
         // run ngOnInit
         fixture.detectChanges();
 
+        // grabbing the HeroComponent classes within the HeroesComponent
         const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
-        // grabbing the HeroComponent class
         
         // raises the delete event
         // undefined is okay for a parameter since the hero isn't passed into the delete event handler
         (<HeroComponent>heroComponentDEs[0].componentInstance).delete.emit(undefined);
+
+        expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+    })
+
+    // alternate way to verify the deleteHero method is called
+    // by triggering the delete event
+    // a shortcut to emitting the delete event
+    it(`should call heroService.deleteHero when the Hero Component's 
+        delete event is triggered`, () => {
+        // watches that the 'delete' method is invoked
+        spyOn(fixture.componentInstance, 'delete');
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+        // run ngOnInit
+        fixture.detectChanges();
+
+        // grabbing the HeroComponent classes within the HeroesComponent
+        const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
+        
+        // raises the delete event
+        // undefined is okay for a parameter since the hero isn't passed into the delete event handler
+        heroComponentDEs[0].triggerEventHandler('delete', null);
 
         expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
     })
