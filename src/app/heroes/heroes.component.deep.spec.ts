@@ -2,12 +2,32 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HeroesComponent } from "./heroes.component";
 import { HeroComponent } from "../hero/hero.component";
 import { HeroService } from "../hero.service";
-import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { Directive, Input, NO_ERRORS_SCHEMA } from "@angular/core";
 import { of } from "rxjs";
 import { By } from "@angular/platform-browser";
 
 // testing the HeroesComponent and how it interacts with child
 // HeroComponent components
+
+// this was in the official documentation to demonstrate how to listen to 
+// a routerLink
+@Directive({
+    selector: '[routerLink]',
+    // listen to the click event on the DOM mode, when clicked
+    // call onClick method
+    host: { '(click)': 'onClick()'}
+})
+export class RouterLinkDirectiveStub {
+    // stores link clicked so it can be verified
+    @Input('routerLink') linkParams: any;
+    navigatedTo: any = null;
+
+    // checks that the link has been clicked
+    // also can check if the value is correct
+    onClick() {
+        this.navigatedTo = this.linkParams;
+    }
+}
 
 describe("HeroesComponent (deep tests)", () => {
     let fixture: ComponentFixture<HeroesComponent>;
@@ -27,13 +47,14 @@ describe("HeroesComponent (deep tests)", () => {
         TestBed.configureTestingModule({
             declarations: [
                 HeroesComponent,
-                HeroComponent
+                HeroComponent,
+                RouterLinkDirectiveStub
             ],
             providers: [
                 // tells Angular when something expects HeroService, return mockHeroService
                 { provide: HeroService, useValue: mockHeroService }
             ],
-            schemas: [NO_ERRORS_SCHEMA]
+            //schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(HeroesComponent);
         
