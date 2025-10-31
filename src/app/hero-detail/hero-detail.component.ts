@@ -33,33 +33,38 @@ export class HeroDetailComponent implements OnInit {
     this.location.back();
   }
 
-  save(): void {
-    var p = new Promise((resolve) => {
-      this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
-      resolve();
-    });
-  }
-
   // save(): void {
-  //   debounce(() => {
-  //     this.heroService.updateHero(this.hero)
-  //       .subscribe(() => this.goBack());
-  //   }, 250, false)();
+  //   var p = new Promise((resolve) => {
+  //     this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
+  //     resolve();
+  //   });
   // }
+
+  save(): void {
+    // wait 250 milliseconds
+    // if clicked multiple times in 250ms will only contact the server once
+    // results in makng it asynchronous
+    debounce(() => {
+      this.heroService.updateHero(this.hero)
+        .subscribe(() => this.goBack());
+    }, 250, false)();
+  }
 }
 
-// function debounce(func, wait, immediate) {
-//   var timeout;
-//   return function () {
-//     var context = this,
-//       args = arguments;
-//     var later = function () {
-//       timeout = null;
-//       if (!immediate) func.apply(context, args);
-//     };
-//     var callNow = immediate && !timeout;
-//     clearTimeout(timeout);
-//     timeout = setTimeout(later, wait);
-//     if (callNow) func.apply(context, args);
-//   };
-// }
+// prevents clicking the Save button multiple times rapidly
+// from sending a bunch of events
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+      args = arguments;
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
