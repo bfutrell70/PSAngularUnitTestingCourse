@@ -39,4 +39,23 @@ describe('HeroDetailComponent', () => {
 
         expect(fixture.nativeElement.querySelector('h2').textContent).toContain('SUPERDUDE');
     })
+
+    // async test
+    // done indicates to Jasmine that the test is asynchronous
+    it('should call updateHero when save is called', (done) => {
+        // ignore the return value in the component's code
+        mockHeroService.updateHero.and.returnValue(of({}));
+        fixture.detectChanges();
+
+        fixture.componentInstance.save();
+
+        // since save waits 250ms before calling updateHero, we need
+        // to set a timeout for a longer duration before running the
+        // expect.
+        setTimeout(() => {
+            expect(mockHeroService.updateHero).toHaveBeenCalled();
+            // this tells Jasmine that the test is complete.
+            done();
+        }, 300);
+    })
 })
