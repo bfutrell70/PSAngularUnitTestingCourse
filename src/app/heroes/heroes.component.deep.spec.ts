@@ -15,7 +15,7 @@ import { By } from "@angular/platform-browser";
     selector: '[routerLink]',
     // listen to the click event on the DOM mode, when clicked
     // call onClick method
-    host: { '(click)': 'onClick()'}
+    host: { '(click)': 'onClick()' }
 })
 export class RouterLinkDirectiveStub {
     // stores link clicked so it can be verified
@@ -57,14 +57,14 @@ describe("HeroesComponent (deep tests)", () => {
             //schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(HeroesComponent);
-        
+
         // causes ngOnInit() to be invoked in components
     })
-    
+
     // it('should be true', () => {
     //     expect(true).toBe(true);
     // })
-    
+
     it('should render each hero as a HeroComponent', () => {
         mockHeroService.getHeroes.and.returnValue(of(HEROES));
 
@@ -95,7 +95,7 @@ describe("HeroesComponent (deep tests)", () => {
         heroComponentDEs[0].query(By.css('button'))
             // first parameter is event name, second is the event object
             // in this case we need an object that contains stopPropagation
-            .triggerEventHandler('click', { stopPropagation: () => {}});
+            .triggerEventHandler('click', { stopPropagation: () => { } });
 
         expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
     })
@@ -113,7 +113,7 @@ describe("HeroesComponent (deep tests)", () => {
 
         // grabbing the HeroComponent classes within the HeroesComponent
         const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
-        
+
         // raises the delete event
         // undefined is okay for a parameter since the hero isn't passed into the delete event handler
         (<HeroComponent>heroComponentDEs[0].componentInstance).delete.emit(undefined);
@@ -135,12 +135,28 @@ describe("HeroesComponent (deep tests)", () => {
 
         // grabbing the HeroComponent classes within the HeroesComponent
         const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
-        
+
         // raises the delete event
         // undefined is okay for a parameter since the hero isn't passed into the delete event handler
         heroComponentDEs[0].triggerEventHandler('delete', null);
 
         expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+    })
+
+    it('should have the correct route for the first hero', () => {
+        // set data returned from the servicee
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+
+        let routerLink = heroComponents[0]
+            .query(By.directive(RouterLinkDirectiveStub))
+            .injector.get(RouterLinkDirectiveStub);
+
+        heroComponents[0].query(By.css('a')).triggerEventHandler('click', null);
+
+        expect(routerLink.navigatedTo).toBe('/detail/1');
     })
 
 })
