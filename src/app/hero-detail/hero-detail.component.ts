@@ -11,6 +11,7 @@ import { HeroService } from '../hero.service';
   templateUrl: './hero-detail.component.html',
   styleUrls: ['./hero-detail.component.css'],
 })
+
 export class HeroDetailComponent implements OnInit {
   @Input() hero: Hero;
 
@@ -40,15 +41,30 @@ export class HeroDetailComponent implements OnInit {
   //   });
   // }
 
+  // save(): void {
+  //   // wait 250 milliseconds
+  //   // if clicked multiple times in 250ms will only contact the server once
+  //   // results in makng it asynchronous
+  //   debounce(() => {
+  //     this.heroService.updateHero(this.hero)
+  //       .subscribe(() => this.goBack());
+  //   }, 250, false)();
+  // }
+
+  // an example of calling a promise
   save(): void {
-    // wait 250 milliseconds
-    // if clicked multiple times in 250ms will only contact the server once
-    // results in makng it asynchronous
-    debounce(() => {
+    // is async because of the call to someThirdPartyPromise()
+    someThirdPartyPromise().then(() => {
       this.heroService.updateHero(this.hero)
         .subscribe(() => this.goBack());
-    }, 250, false)();
+    });
   }
+}   // end export class
+
+function someThirdPartyPromise(): Promise<any> {
+  return new Promise((resolve) => {
+    resolve(null);
+  });
 }
 
 // prevents clicking the Save button multiple times rapidly
